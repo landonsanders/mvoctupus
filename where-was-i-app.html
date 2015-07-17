@@ -1,0 +1,88 @@
+<!doctype html>
+	<html>
+		<head>
+			<title>Where was I?</title>
+		</head>
+		<body>
+			<h1>Where was I?</h1>
+
+			<input type="text" id="enter-where">
+
+			<div id="here-where">
+				<p></p>
+			</div>
+
+			<script>
+				var APP = {};
+
+				APP.model = {
+					init: function () {
+						if (!localStorage['where']) {
+							localStorage['where'] = '';
+						}
+					},
+
+					set: function (value) {
+						localStorage['where'] = value;
+					},
+
+					get: function () {
+						return localStorage['where'];
+					}
+				};
+
+				APP.octopus = {
+					get: function () {
+						return APP.model.get();
+					},
+					set: function (value) {
+						APP.model.set(value)
+					}
+				};
+
+				APP.view = {
+					init: function () {
+
+						var input = document.getElementById('enter-where'), value;
+						
+						this.el = document.getElementById('here-where').getElementsByTagName('p')[0];
+
+						input.onkeyup = function (e) {
+							if (e.keyCode === 13) {
+								value = this.value;
+
+								APP.octopus.set(value);
+
+								this.value = '';
+
+								APP.view.render();
+							}
+						}
+			
+						this.render();
+					},
+
+					destroy: function () {
+						this.el = null;
+					
+						input.onkeyup = null;
+					},
+
+					render: function () {
+						var html = '<em>I was at,</em> ';
+						this.el.innerHTML = '';
+
+						var value = APP.octopus.get();
+
+						html = html + '"' + value + '".';
+
+						this.el.innerHTML = html;
+
+						
+					}
+				};
+
+				APP.view.init();
+			</script>
+		</body>
+	</html>
